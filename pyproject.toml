@@ -1,20 +1,22 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "tryfi"
+name = "pyficollar"
 version = "0.1.0"
-description = "Python client library for the TryFi (Fi dog collar) API"
+description = "Python client library and CLI for the TryFi (Fi smart dog collar) API"
 readme = "README.md"
 requires-python = ">=3.9"
+license = { text = "MIT" }
 authors = [
-    { name = "Alex O'Neill" }
+    { name = "Alex O'Neill", email = "me@aoneill.me" }
 ]
-keywords = ["tryfi", "fi-collar", "pet-tracker", "dog", "iot", "gps"]
+keywords = ["tryfi", "fi", "collar", "dog", "gps", "pet-tracker", "iot", "pyficollar"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -24,6 +26,8 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
     "Topic :: Home Automation",
     "Topic :: Software Development :: Libraries :: Python Modules",
+    "Operating System :: OS Independent",
+    "Typing :: Typed",
 ]
 dependencies = []
 
@@ -32,7 +36,16 @@ pydantic = ["pydantic>=2.0"]
 test = ["pytest"]
 
 [project.scripts]
-tryfi = "fi.cli:main"
+pyficollar = "pyficollar.cli:main"
+tryfi = "pyficollar.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/alexoneill/pyficollar"
+Repository = "https://github.com/alexoneill/pyficollar"
+Issues = "https://github.com/alexoneill/pyficollar/issues"
+
+[tool.setuptools.package-data]
+pyficollar = ["py.typed"]
 
 [tool.setuptools.packages.find]
-include = ["fi*"]
+include = ["pyficollar*"]

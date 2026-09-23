@@ -1,28 +1,24 @@
-"""TryFi Python API Client.
-
-Reconstructed from TryFi mobile app network traces.
-"""
+"""Compatibility shim for pyficollar."""
 
 from __future__ import annotations
+import warnings
 
-from .client import FiClient
-from .const import (
+from pyficollar import (
     API_BASE_URL,
-    LedColorEnum,
-)
-from .exceptions import (
+    ActivitySummary,
+    Device,
     FiAuthError,
+    FiClient,
     FiDeviceError,
     FiError,
     FiGraphQLError,
     FiNetworkError,
-)
-from .models import (
-    ActivitySummary,
-    Device,
+    FiTransport,
     Household,
     LedColor,
+    LedColorEnum,
     Location,
+    OPERATIONS,
     Pet,
     PetLiveState,
     Place,
@@ -30,33 +26,12 @@ from .models import (
     RestSummary,
     User,
     Walk,
+    __all__,
+    __version__,
 )
-from .queries import OPERATIONS
-from .transport import FiTransport
 
-__version__ = "0.1.0"
-
-__all__ = [
-    "FiClient",
-    "FiTransport",
-    "FiError",
-    "FiAuthError",
-    "FiGraphQLError",
-    "FiNetworkError",
-    "FiDeviceError",
-    "Pet",
-    "Device",
-    "PetLiveState",
-    "ActivitySummary",
-    "RestSummary",
-    "Walk",
-    "Place",
-    "Location",
-    "Position",
-    "User",
-    "Household",
-    "LedColor",
-    "LedColorEnum",
-    "OPERATIONS",
-    "API_BASE_URL",
-]
+warnings.warn(
+    "Importing from 'fi' is deprecated. Please import from 'pyficollar' instead.",
+    DeprecationWarning,
+    stacklevel=2,
+)

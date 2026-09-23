@@ -1,7 +1,7 @@
 """Tests for TryFi models."""
 
 import unittest
-from fi.models import (
+from pyficollar.models import (
     ActivitySummary,
     Device,
     Pet,

@@ -4,8 +4,8 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from fi.client import FiClient
-from fi.transport import FiTransport
+from pyficollar.client import FiClient
+from pyficollar.transport import FiTransport
 
 
 class TestSessionPersistence(unittest.TestCase):

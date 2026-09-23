@@ -1,6 +1,10 @@
-# TryFi Python API Client
+# pyficollar
 
-A Python client library for the **TryFi (Fi Smart Dog Collar)** API, reconstructed directly from iOS app network traces (`request_log.chlsj`).
+A Python client library and CLI for the **TryFi (Fi Smart Dog Collar)** API, reconstructed directly from iOS app network traces (`request_log.chlsj`).
+
+[![PyPI version](https://img.shields.io/pypi/v/pyficollar.svg)](https://pypi.org/project/pyficollar/)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
@@ -19,6 +23,7 @@ A Python client library for the **TryFi (Fi Smart Dog Collar)** API, reconstruct
   - [Collar LED Colors](#collar-led-colors)
   - [Captured GraphQL Operations (40 Operations)](#captured-graphql-operations-40-operations)
 - [Command Line Interface (CLI)](#command-line-interface-cli)
+- [Building & Publishing to PyPI](#building--publishing-to-pypi)
 - [Offline Testing & Demonstration](#offline-testing--demonstration)
 - [Security & Privacy](#security--privacy)
 
@@ -36,17 +41,24 @@ A Python client library for the **TryFi (Fi Smart Dog Collar)** API, reconstruct
 - **Activity & Sleep Tracking**: Daily steps, step goals, strain levels, overnight sleep, and nap duration.
 - **Walk History**: Historical walk routes with GPS paths, distance in km/miles, step counts, and walker information.
 - **Full GraphQL Registry**: 40 extracted GraphQL operations and query documents captured directly from the official iOS client.
-- **CLI Utility**: Command-line tool `tryfi` or `python -m fi.cli` for quick checks and device control.
+- **CLI Utility**: Command-line tool `pyficollar` (or `python -m pyficollar.cli`) for quick checks and device control.
+- **Type Annotated**: Fully typed with PEP 561 `py.typed` marker.
 
 ---
 
 ## Installation
 
+Install from PyPI:
+
 ```bash
-pip install .
+pip install pyficollar
 ```
 
-Or copy the `fi/` package directory directly into your project.
+Or install locally in editable mode:
+
+```bash
+pip install -e .
+```
 
 ---
 
@@ -55,7 +67,7 @@ Or copy the `fi/` package directory directly into your project.
 ### 1. Authentication & Session Persistence
 
 ```python
-from fi import FiClient
+from pyficollar import FiClient
 
 # Initialize client with a session file path for persistence
 client = FiClient(session_file="~/.tryfi_session.json")
@@ -167,7 +179,7 @@ if walk:
 
 ### Collar LED Colors
 
-The collar supports 7 LED colors (defined in `fi.const.LedColorEnum`):
+The collar supports 7 LED colors (defined in `pyficollar.const.LedColorEnum`):
 
 | Color Name | Code | Hex Code |
 |---|---|---|
@@ -232,17 +244,37 @@ Extracted directly from `request_log.chlsj` and available via `client.execute_gr
 
 ```bash
 # 1. Login & persist session to ~/.tryfi_session.json
-python -m fi.cli login --email me@example.com
+pyficollar login --email me@example.com
 
 # 2. List dogs and collar batteries
-python -m fi.cli pets
+pyficollar pets
 
 # 3. Check real-time live GPS & location
-python -m fi.cli live <PET_ID>
+pyficollar live <PET_ID>
 
 # 4. Turn LED light on or off
-python -m fi.cli led <MODULE_ID> on
-python -m fi.cli led <MODULE_ID> off
+pyficollar led <MODULE_ID> on
+pyficollar led <MODULE_ID> off
+```
+
+---
+
+## Building & Publishing to PyPI
+
+To build and release a new version to PyPI:
+
+```bash
+# 1. Install build tools
+pip install --upgrade build twine
+
+# 2. Build sdist and wheel
+python -m build
+
+# 3. Verify the package
+twine check dist/*
+
+# 4. Upload to PyPI (or TestPyPI)
+twine upload dist/*
 ```
 
 ---
@@ -252,7 +284,7 @@ python -m fi.cli led <MODULE_ID> off
 Run tests and the demonstration script offline with zero network credentials:
 
 ```bash
-# Run unit test suite (24 tests)
+# Run unit test suite (25 tests)
 python3 -m unittest discover tests
 
 # Run interactive demonstration

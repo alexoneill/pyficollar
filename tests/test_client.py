@@ -6,10 +6,10 @@ import tempfile
 import unittest
 from typing import Any
 
-from fi.client import FiClient
-from fi.const import LOGIN_ENDPOINT
-from fi.exceptions import FiAuthError, FiGraphQLError
-from fi.transport import FiTransport
+from pyficollar.client import FiClient
+from pyficollar.const import LOGIN_ENDPOINT
+from pyficollar.exceptions import FiAuthError, FiGraphQLError
+from pyficollar.transport import FiTransport
 from tests.fixtures import (
     AllUserPets,
     CurrentUserPetsAndDevices,

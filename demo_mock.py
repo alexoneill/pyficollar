@@ -7,7 +7,7 @@ to demonstrate all key operations of the library without requiring live credenti
 
 from __future__ import annotations
 from typing import Any
-from fi import FiClient, FiTransport
+from pyficollar import FiClient, FiTransport
 from tests.fixtures import (
     AllUserPets,
     CurrentUserPetsAndDevices,
