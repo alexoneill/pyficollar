@@ -12,7 +12,7 @@ Guidance and instructions for AI coding agents working on the `pyficollar` codeb
 - **Zero Mandatory External Dependencies**: Built strictly using the Python standard library (`urllib.request`, `http.cookiejar`, `json`, `dataclasses`). Keep core runtime dependency-free.
 - **Session Persistence**: Sessions can be saved to and loaded from JSON files (`save_session` / `load_session`) so credentials are only needed once.
 - **Offline Testability**: All tests run without internet access using real payloads captured in `tests/fixtures.py`.
-- **Typing & Compatibility**: Modern type annotations (PEP 561 `py.typed`). A backwards-compatibility shim exists at `fi/__init__.py`.
+- **Typing & Standards**: Modern type annotations (PEP 561 `py.typed`).
 
 ---
 
@@ -30,12 +30,9 @@ Guidance and instructions for AI coding agents working on the `pyficollar` codeb
 │   ├── transport.py        # FiTransport: HTTP transport, cookies, session persistence
 │   ├── cli.py              # CLI tool (login, pets, live, led)
 │   └── py.typed            # PEP 561 typed package marker
-├── fi/                     # Compatibility shim for legacy `import fi`
-│   └── __init__.py         # Re-exports pyficollar symbols with DeprecationWarning
 ├── tests/                  # Offline unit test suite
 │   ├── fixtures.py         # Real JSON payloads extracted from request_log.chlsj
 │   ├── test_client.py      # FiClient tests with MockTransport
-│   ├── test_compat.py      # Test for legacy `fi` import shim
 │   ├── test_models.py      # Model deserialization and property tests
 │   └── test_session.py     # Disk session persistence tests
 ├── demo_mock.py            # Standalone offline demonstration script
@@ -106,8 +103,7 @@ python3 -m pyficollar.cli --help
 4. Add a sample response fixture to `tests/fixtures.py`.
 5. Add unit tests in `tests/test_client.py` and `tests/test_models.py`.
 
-### Preserving Compatibility
-- Ensure `fi/__init__.py` continues to re-export any new public symbols added to `pyficollar/__init__.py`.
+### Dependencies & Compatibility
 - Keep dependencies strictly optional. Do not import third-party packages in `pyficollar` root or standard runtime without a fallback or try/except block.
 
 ---
