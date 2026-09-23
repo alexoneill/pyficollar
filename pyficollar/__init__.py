@@ -33,8 +33,17 @@ from .models import (
 )
 from .queries import OPERATIONS
 from .transport import FiTransport
+try:
+    from ._version import __version__, __version_tuple__
+except ImportError:
+    try:
+        from importlib.metadata import version, PackageNotFoundError
 
-__version__ = "0.1.0"
+        __version__ = version("pyficollar")
+        __version_tuple__ = (0, 0, 0, "unknown")
+    except PackageNotFoundError:
+        __version__ = "0.0.0.dev0"
+        __version_tuple__ = (0, 0, 0, "dev0")
 
 __all__ = [
     "FiClient",

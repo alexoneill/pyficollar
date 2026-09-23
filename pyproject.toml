@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=61.0", "setuptools-scm>=8.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyficollar"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Python client library and CLI for the TryFi (Fi smart dog collar) API"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -43,6 +43,9 @@ tryfi = "pyficollar.cli:main"
 Homepage = "https://github.com/alexoneill/pyficollar"
 Repository = "https://github.com/alexoneill/pyficollar"
 Issues = "https://github.com/alexoneill/pyficollar/issues"
+
+[tool.setuptools_scm]
+version_file = "pyficollar/_version.py"
 
 [tool.setuptools.package-data]
 pyficollar = ["py.typed"]

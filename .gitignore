@@ -23,6 +23,7 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+pyficollar/_version.py
 
 # Virtual environments
 .env

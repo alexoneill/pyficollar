@@ -13,6 +13,7 @@ Guidance and instructions for AI coding agents working on the `pyficollar` codeb
 - **Session Persistence**: Sessions can be saved to and loaded from JSON files (`save_session` / `load_session`) so credentials are only needed once.
 - **Offline Testability**: All tests run without internet access using real payloads captured in `tests/fixtures.py`.
 - **Typing & Standards**: Modern type annotations (PEP 561 `py.typed`).
+- **Tag-Driven Versioning**: Versioning is 100% driven by Git tags via `setuptools-scm`. Never hardcode version strings in code.
 
 ---
 
