@@ -261,7 +261,19 @@ pyficollar led <MODULE_ID> off
 
 ## Building & Publishing to PyPI
 
-To build and release a new version to PyPI:
+### Automated Release (Recommended)
+
+Releases are 100% automated via GitHub Actions and PyPI Trusted Publishing. Versioning is tag-driven via `setuptools-scm`:
+
+```bash
+# Push a version tag to trigger automated build & publish to PyPI
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+### Manual / Local Build
+
+To test building distribution packages locally:
 
 ```bash
 # 1. Install build tools
@@ -272,9 +284,6 @@ python -m build
 
 # 3. Verify the package
 twine check dist/*
-
-# 4. Upload to PyPI (or TestPyPI)
-twine upload dist/*
 ```
 
 ---
@@ -284,7 +293,7 @@ twine upload dist/*
 Run tests and the demonstration script offline with zero network credentials:
 
 ```bash
-# Run unit test suite (25 tests)
+# Run unit test suite (24 tests)
 python3 -m unittest discover tests
 
 # Run interactive demonstration

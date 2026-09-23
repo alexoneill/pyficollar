@@ -1,5 +1,7 @@
 """Tests for session persistence (save_session / load_session)."""
 
+from __future__ import annotations
+
 from pathlib import Path
 import tempfile
 import unittest

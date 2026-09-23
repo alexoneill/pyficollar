@@ -46,6 +46,7 @@ Issues = "https://github.com/alexoneill/pyficollar/issues"
 
 [tool.setuptools_scm]
 version_file = "pyficollar/_version.py"
+fallback_version = "0.1.0"
 
 [tool.setuptools.package-data]
 pyficollar = ["py.typed"]

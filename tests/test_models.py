@@ -1,5 +1,7 @@
 """Tests for TryFi models."""
 
+from __future__ import annotations
+
 import unittest
 from pyficollar.models import (
     ActivitySummary,

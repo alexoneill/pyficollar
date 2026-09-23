@@ -1,5 +1,7 @@
 """Tests for FiClient using mocked transport."""
 
+from __future__ import annotations
+
 import json
 from pathlib import Path
 import tempfile

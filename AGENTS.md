@@ -37,6 +37,9 @@ Guidance and instructions for AI coding agents working on the `pyficollar` codeb
 │   ├── test_models.py      # Model deserialization and property tests
 │   └── test_session.py     # Disk session persistence tests
 ├── demo_mock.py            # Standalone offline demonstration script
+├── .github/workflows/     # CI/CD workflows
+│   ├── test.yml            # Multi-version matrix test suite (Python 3.9 - 3.13)
+│   └── publish.yml         # PyPI release on v* tag push (Trusted Publishing)
 ├── pyproject.toml          # PEP 621 / setuptools build configuration
 ├── README.md               # User documentation and API reference
 ├── LICENSE                 # MIT License
@@ -106,6 +109,8 @@ python3 -m pyficollar.cli --help
 
 ### Dependencies & Compatibility
 - Keep dependencies strictly optional. Do not import third-party packages in `pyficollar` root or standard runtime without a fallback or try/except block.
+- **Python 3.9+ Compatibility**: Always include `from __future__ import annotations` at the top of every module and test file so PEP 604 union types (`|`) and generic built-ins (`dict[...]`, `list[...]`) evaluate without errors in Python 3.9.
+- **Tag-Driven Releases**: Releases to PyPI are handled by `.github/workflows/publish.yml` using PyPI Trusted Publishing and trigger strictly on pushing `v*` tags (`git tag vX.Y.Z && git push origin vX.Y.Z`). `fallback_version = "0.1.0"` in `pyproject.toml` ensures local and untagged builds never fail.
 
 ---
 
