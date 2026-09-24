@@ -41,6 +41,39 @@ class TestSessionPersistence(unittest.TestCase):
             cookie_names = [c.name for c in transport2.cookie_jar]
             self.assertIn("fi.sid", cookie_names)
             self.assertIn("fi_session_id", cookie_names)
+            self.assertEqual(transport2.base_headers.get("X-Session-Id"), "mock_session_12345")
+
+    def test_preserve_server_fi_sid_cookie(self):
+        transport = FiTransport()
+        # Simulate server Set-Cookie with signed session ID
+        from http.cookiejar import Cookie
+        server_cookie = Cookie(
+            version=0,
+            name="fi.sid",
+            value="s:mock_session.signed_hmac_hash",
+            port=None,
+            port_specified=False,
+            domain="api.tryfi.com",
+            domain_specified=True,
+            domain_initial_dot=False,
+            path="/",
+            path_specified=True,
+            secure=True,
+            expires=None,
+            discard=False,
+            comment=None,
+            comment_url=None,
+            rest={"HttpOnly": None},
+            rfc2109=False,
+        )
+        transport.cookie_jar.set_cookie(server_cookie)
+
+        # Calling set_session should not overwrite signed fi.sid
+        transport.set_session(session_id="mock_session", user_id="u123", email="test@example.com")
+        cookies = {c.name: c.value for c in transport.cookie_jar}
+        self.assertEqual(cookies["fi.sid"], "s:mock_session.signed_hmac_hash")
+        self.assertEqual(cookies["fi_session_id"], "mock_session")
+        self.assertEqual(transport.base_headers["X-Session-Id"], "mock_session")
 
     def test_client_auto_load_session(self):
         with tempfile.TemporaryDirectory() as tmpdir:

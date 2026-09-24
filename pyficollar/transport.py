@@ -62,33 +62,59 @@ class FiTransport:
     ) -> None:
         """Store session identifiers and register session cookies."""
         self.session_id = session_id
+        self.base_headers["X-Session-Id"] = session_id
         if user_id:
             self.user_id = user_id
         if email:
             self.email = email
 
-        # Ensure cookie jar has fi.sid and fi_session_id cookies
-        for name in ("fi.sid", "fi_session_id"):
-            c = Cookie(
-                version=0,
-                name=name,
-                value=session_id,
-                port=None,
-                port_specified=False,
-                domain=domain,
-                domain_specified=True,
-                domain_initial_dot=False,
-                path="/",
-                path_specified=True,
-                secure=True,
-                expires=None,
-                discard=False,
-                comment=None,
-                comment_url=None,
-                rest={"HttpOnly": None},
-                rfc2109=False,
+        # Ensure cookie jar has fi_session_id and fallback fi.sid
+        # Crucial: Do not overwrite fi.sid if already populated by server Set-Cookie (which includes HMAC signature)
+        existing_cookie_names = {c.name for c in self.cookie_jar}
+        if "fi_session_id" not in existing_cookie_names:
+            self.cookie_jar.set_cookie(
+                Cookie(
+                    version=0,
+                    name="fi_session_id",
+                    value=session_id,
+                    port=None,
+                    port_specified=False,
+                    domain=domain,
+                    domain_specified=True,
+                    domain_initial_dot=False,
+                    path="/",
+                    path_specified=True,
+                    secure=True,
+                    expires=None,
+                    discard=False,
+                    comment=None,
+                    comment_url=None,
+                    rest={"HttpOnly": None},
+                    rfc2109=False,
+                )
             )
-            self.cookie_jar.set_cookie(c)
+        if "fi.sid" not in existing_cookie_names:
+            self.cookie_jar.set_cookie(
+                Cookie(
+                    version=0,
+                    name="fi.sid",
+                    value=session_id,
+                    port=None,
+                    port_specified=False,
+                    domain=domain,
+                    domain_specified=True,
+                    domain_initial_dot=False,
+                    path="/",
+                    path_specified=True,
+                    secure=True,
+                    expires=None,
+                    discard=False,
+                    comment=None,
+                    comment_url=None,
+                    rest={"HttpOnly": None},
+                    rfc2109=False,
+                )
+            )
 
     def save_session(self, filepath: str | Path) -> None:
         """Serialize current session and cookies to a JSON file."""
@@ -128,6 +154,8 @@ class FiTransport:
             payload = json.load(f)
 
         self.session_id = payload.get("session_id")
+        if self.session_id:
+            self.base_headers["X-Session-Id"] = self.session_id
         self.user_id = payload.get("user_id")
         self.email = payload.get("email")
 
