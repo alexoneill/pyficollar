@@ -8,6 +8,7 @@ from pathlib import Path
 import sys
 
 from .client import FiClient
+from .const import LedColorEnum
 from .exceptions import FiAuthError, FiError
 
 DEFAULT_SESSION_FILE = Path.home() / ".tryfi_session.json"
@@ -90,13 +91,57 @@ def cmd_live(args: argparse.Namespace) -> None:
 def cmd_led(args: argparse.Namespace) -> None:
     client = get_client(Path(args.session_file) if args.session_file else None)
     if not client.is_authenticated:
-        print("Not logged in. Run `python -m fi.cli login` first.", file=sys.stderr)
+        print("Not logged in. Run `python -m pyficollar login` first.", file=sys.stderr)
         sys.exit(1)
 
+    color_code = None
+    if getattr(args, "color", None):
+        color_arg = args.color.strip()
+        if color_arg.isdigit():
+            color_code = int(color_arg)
+        else:
+            for item in LedColorEnum:
+                if item.display_name.lower() == color_arg.lower():
+                    color_code = item.code
+                    break
+        if color_code is None:
+            valid_names = ", ".join([f"{item.display_name} ({item.code})" for item in LedColorEnum])
+            print(f"Unknown color: {args.color}. Valid colors: {valid_names}", file=sys.stderr)
+            sys.exit(1)
+
+    # 1. Status mode (query state without mutating)
+    if args.state is None or args.state.lower() == "status":
+        if color_code is not None:
+            try:
+                dev = client.set_led_color(args.module_id, color_code)
+                color_name = dev.led_color.name if dev.led_color else str(color_code)
+                print(f"LED color on module {dev.module_id} set to {color_name}.")
+            except FiError as e:
+                print(f"Error setting LED color: {e}", file=sys.stderr)
+                sys.exit(1)
+            return
+
+        try:
+            dev = client.get_device(args.module_id)
+            state_str = "ON" if dev.led_enabled else "OFF"
+            color_str = f"{dev.led_color.name} (code: {dev.led_color.led_color_code}, hex: #{dev.led_color.hex_code})" if dev.led_color else "Unknown"
+            print(f"Collar LED for module {dev.module_id}:")
+            print(f"  State: {state_str}")
+            print(f"  Color: {color_str}")
+        except FiError as e:
+            print(f"Error fetching LED status: {e}", file=sys.stderr)
+            sys.exit(1)
+        return
+
+    # 2. Mutating on/off state
     state = args.state.lower() in ("on", "1", "true")
     try:
         dev = client.set_led(args.module_id, led_enabled=state)
         print(f"LED on module {dev.module_id} is now {'ON' if dev.led_enabled else 'OFF'}.")
+        if color_code is not None:
+            dev = client.set_led_color(args.module_id, color_code)
+            color_name = dev.led_color.name if dev.led_color else str(color_code)
+            print(f"LED color on module {dev.module_id} set to {color_name}.")
     except FiError as e:
         print(f"Error setting LED: {e}", file=sys.stderr)
         sys.exit(1)
@@ -119,9 +164,11 @@ def build_parser() -> argparse.ArgumentParser:
     live_p.add_argument("pet_id", help="Target Pet ID")
     live_p.set_defaults(func=cmd_live)
 
-    led_p = subparsers.add_parser("led", help="Turn collar LED light on or off")
+    led_p = subparsers.add_parser("led", help="Collar LED light controls and status")
     led_p.add_argument("module_id", help="Collar module ID (e.g. FC35H674757)")
-    led_p.add_argument("state", choices=["on", "off"], help="LED state (on or off)")
+    led_p.add_argument("state", nargs="?", choices=["on", "off", "status"], default=None, help="LED action: on, off, or status (default: status)")
+    colors_help = ", ".join([f"{item.display_name} ({item.code})" for item in LedColorEnum])
+    led_p.add_argument("--color", help=f"Set LED color by name or code. Available: {colors_help}")
     led_p.set_defaults(func=cmd_led)
 
     return parser

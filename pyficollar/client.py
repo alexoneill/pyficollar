@@ -247,6 +247,21 @@ class FiClient:
             raise FiError("Could not parse updated device data")
         return dev
 
+    def set_led_color(self, module_id: str, led_color_code: int) -> Device:
+        """Set collar LED light color."""
+        variables = {
+            "moduleId": module_id,
+            "ledColorCode": int(led_color_code),
+        }
+        res = self.execute_graphql("SetDeviceLed", variables=variables)
+        updated = res.get("data", {}).get("setDeviceLed")
+        if not updated:
+            raise FiError(f"Failed to update LED color for module {module_id}")
+        dev = Device.from_dict(updated)
+        if not dev:
+            raise FiError("Could not parse updated device data")
+        return dev
+
     def set_lost_dog_mode(self, pet_id: str, enabled: bool) -> Device:
         """Turn collar Lost Dog Mode on (LOST_DOG) or off (NORMAL)."""
         mode = "LOST_DOG" if enabled else "NORMAL"

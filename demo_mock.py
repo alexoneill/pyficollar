@@ -19,6 +19,7 @@ from tests.fixtures import (
     LastWalkWithMap,
     LOGIN_RESPONSE,
     PetLiveState,
+    SetDeviceLed,
     SetPetOperationParamsMode,
     UpdateDeviceOperationParams,
     UserPetProfile,
@@ -47,6 +48,7 @@ class DemoMockTransport(FiTransport):
             "UpdateDeviceOperationParams": UpdateDeviceOperationParams,
             "EnableOrExtendQuickReportMode": EnableOrExtendQuickReportMode,
             "SetPetOperationParamsMode": SetPetOperationParamsMode,
+            "SetDeviceLed": SetDeviceLed,
         }
         return mapping.get(operation_name, {"data": {}})
 
@@ -111,8 +113,9 @@ def main() -> None:
     print(f"\n6. Controlling Collar Hardware (Module: {module_id})...")
     device = client.set_led(module_id, led_enabled=True)
     print(f"   -> LED Light Toggled: {'ON' if device.led_enabled else 'OFF'}")
+    device = client.set_led_color(module_id, 4)
     if device.led_color:
-        print(f"   -> Current LED Color: {device.led_color.name} (#{device.led_color.hex_code})")
+        print(f"   -> Set LED Color to: {device.led_color.name} (#{device.led_color.hex_code})")
 
     # 8. Activate & Deactivate Lost Dog Mode
     print(f"\n7. Testing Lost Dog Mode (SetPetOperationParamsMode)...")

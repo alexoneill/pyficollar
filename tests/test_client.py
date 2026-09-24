@@ -23,6 +23,7 @@ from tests.fixtures import (
     LastWalkWithMap,
     LOGIN_RESPONSE,
     PetLiveState,
+    SetDeviceLed,
     SetPetOperationParamsMode,
     UpdateDeviceOperationParams,
     UserPetProfile,
@@ -79,6 +80,7 @@ class MockTransport(FiTransport):
             "UpdateDeviceOperationParams": UpdateDeviceOperationParams,
             "EnableOrExtendQuickReportMode": EnableOrExtendQuickReportMode,
             "SetPetOperationParamsMode": SetPetOperationParamsMode,
+            "SetDeviceLed": SetDeviceLed,
         }
 
         if operation_name in mapping:
@@ -156,6 +158,16 @@ class TestFiClient(unittest.TestCase):
         self.assertEqual(self.transport.last_requested_op, "UpdateDeviceOperationParams")
         self.assertEqual(self.transport.last_variables, {"input": {"moduleId": "FC35H674757", "ledEnabled": True}})
         self.assertTrue(dev.led_enabled)
+
+    def test_set_led_color(self) -> None:
+        dev = self.client.set_led_color("FC35H674757", 4)
+        self.assertEqual(self.transport.last_requested_op, "SetDeviceLed")
+        self.assertEqual(self.transport.last_variables, {"moduleId": "FC35H674757", "ledColorCode": 4})
+        self.assertEqual(dev.module_id, "FC35H674757")
+        self.assertIsNotNone(dev.led_color)
+        if dev.led_color:
+            self.assertEqual(dev.led_color.led_color_code, 4)
+            self.assertEqual(dev.led_color.name, "Blue")
 
     def test_set_lost_dog_mode_on(self) -> None:
         dev = self.client.set_lost_dog_mode("3uM1gkV7XRhltddsxTEx3s", enabled=True)

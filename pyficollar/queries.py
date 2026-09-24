@@ -44,7 +44,8 @@ OPERATION_TYPES: dict[str, str] = {
     "PetDocumentFeed": "query",
     "DismissCommsSplash": "mutation",
     "SetDeviceActuationSuccess": "mutation",
-    "SetPetOperationParamsMode": "mutation"
+    "SetPetOperationParamsMode": "mutation",
+    "SetDeviceLed": "mutation",
 }
 
 # Full GraphQL query documents
@@ -213,4 +214,9 @@ OPERATIONS["getSharingSession"] = GETSHARINGSESSION
 # Operation: SetPetOperationParamsMode (mutation)
 SETPETOPERATIONPARAMSMODE = "mutation SetPetOperationParamsMode($input: SetPetOperationParamsModeInput!) { setPetOperationParamsMode(input: $input) { __typename device { __typename ...DeviceApiModel } } }\nfragment ConnectionStateDetails on ConnectionState { __typename date isStale ... on ConnectedToUser { user { __typename id firstName } } ... on ConnectedToBase { chargingBase { __typename id name } } ... on ConnectedToCellular { date isSatellite } ... on ConnectedToWifi { ssid } ... on UnknownConnectivity { unknownConnectivity } }\nfragment DeviceActuationConfigurationApiModel on DeviceActuationConfiguration { __typename haptic piezo }\nfragment DeviceApiModel on Device { __typename id moduleId modelId modelIconUrl disabledForPet carrier infoLastUpdated powerState { __typename batteryPercent hasPowerSupply } operationParams { __typename ...OperationParamsDetails } lastConnectionState(ignoreOffline: true) { __typename ...ConnectionStateDetails } ledColor { __typename ...LedColorDetails } availableLedColors { __typename ...LedColorDetails } capabilities troubleshootWebviewUrl model: currentCollarModelLongName pet { __typename secondaryDevice { __typename ...SecondaryDeviceDetails } } status { __typename ... on OnlineCollarStatus { state { __typename ...OnlineConnectionStateDetails } } ... on OfflineCollarStatus { outOfBattery offlineDuration } } subscriptionAccessType hasSubscriptionOverride modelIconUrl capabilities isSearchPartyEligible currentRestSegmentType actuationConfiguration { __typename ...DeviceActuationConfigurationApiModel } }\nfragment LedColorDetails on LedColor { __typename ledColorCode hexCode name }\nfragment OnlineConnectionStateDetails on OnlineConnectionState { __typename ... on ConnectionState { isStale } ... on ConnectedToUser { user { __typename id firstName } } ... on ConnectedToBase { chargingBase { __typename id name } } ... on ConnectedToWifi { ssid } }\nfragment OperationParamsDetails on OperationParams { __typename mode ledEnabled ledOffAt }\nfragment SecondaryDeviceDetails on Device { __typename id moduleId modelId disabledForPet infoLastUpdated powerState { __typename batteryPercent hasPowerSupply } subscriptionAccessType operationParams { __typename ...OperationParamsDetails } lastConnectionState(ignoreOffline: true) { __typename ...ConnectionStateDetails } ledColor { __typename ...LedColorDetails } availableLedColors { __typename ...LedColorDetails } capabilities model: currentCollarModelLongName status { __typename ... on OnlineCollarStatus { state { __typename ...OnlineConnectionStateDetails } } ... on OfflineCollarStatus { outOfBattery offlineDuration } } modelIconUrl capabilities isSearchPartyEligible hasSubscriptionOverride modelId currentRestSegmentType lastLocation { __typename position { __typename latitude longitude } } actuationConfiguration { __typename ...DeviceActuationConfigurationApiModel } }"
 OPERATIONS["SetPetOperationParamsMode"] = SETPETOPERATIONPARAMSMODE
+
+# Operation: SetDeviceLed (mutation)
+SETDEVICELED = "mutation SetDeviceLed($moduleId: String!, $ledColorCode: Int!) { setDeviceLed(moduleId: $moduleId, ledColorCode: $ledColorCode) { __typename ...DeviceApiModel } }\n" + SETPETOPERATIONPARAMSMODE.split("\n", 1)[1]
+OPERATIONS["SetDeviceLed"] = SETDEVICELED
+
 
