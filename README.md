@@ -41,7 +41,7 @@ A Python client library and CLI for the **TryFi (Fi Smart Dog Collar)** API, rec
 - **Activity & Sleep Tracking**: Daily steps, step goals, strain levels, overnight sleep, and nap duration.
 - **Walk History**: Historical walk routes with GPS paths, distance in km/miles, step counts, and walker information.
 - **Full GraphQL Registry**: 40 extracted GraphQL operations and query documents captured directly from the official iOS client.
-- **CLI Utility**: Command-line tool `pyficollar` (or `python -m pyficollar.cli`) for quick checks and device control.
+- **CLI Utility**: Command-line tool `pyficollar` (or `python -m pyficollar`) for quick checks and device control.
 - **Type Annotated**: Fully typed with PEP 561 `py.typed` marker.
 
 ---
@@ -242,20 +242,24 @@ Extracted directly from `request_log.chlsj` and available via `client.execute_gr
 
 ## Command Line Interface (CLI)
 
+You can run commands using `pyficollar` (when installed) or directly from the repository root with `python3 -m pyficollar`:
+
 ```bash
 # 1. Login & persist session to ~/.tryfi_session.json
-pyficollar login --email me@example.com
+python3 -m pyficollar login --email me@example.com
 
 # 2. List dogs and collar batteries
-pyficollar pets
+python3 -m pyficollar pets
 
 # 3. Check real-time live GPS & location
-pyficollar live <PET_ID>
+python3 -m pyficollar live <PET_ID>
 
 # 4. Turn LED light on or off
-pyficollar led <MODULE_ID> on
-pyficollar led <MODULE_ID> off
+python3 -m pyficollar led <MODULE_ID> on
+python3 -m pyficollar led <MODULE_ID> off
 ```
+
+*(If installed via `pip install -e .` or PyPI, substitute `python3 -m pyficollar` with `pyficollar`.)*
 
 ---
 

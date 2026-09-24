@@ -93,7 +93,7 @@ python3 demo_mock.py
 
 ### Testing the CLI
 ```bash
-python3 -m pyficollar.cli --help
+python3 -m pyficollar --help
 ```
 
 ---
