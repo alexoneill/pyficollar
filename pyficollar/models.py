@@ -182,6 +182,13 @@ class PetLiveState:
             return True
         return False
 
+    @property
+    def is_lost(self) -> bool:
+        """Return True if pet is in Lost Dog Mode."""
+        if not self.lost_mode:
+            return False
+        return self.lost_mode.upper() not in ("LDM_DISABLED", "DISABLED", "NONE", "FALSE", "OFF")
+
     @classmethod
     def from_dict(cls, data: dict[str, Any], pet_id: str = "") -> PetLiveState:
         device_summary = data.get("primaryDevice") or {}

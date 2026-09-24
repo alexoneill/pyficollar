@@ -247,12 +247,35 @@ class FiClient:
             raise FiError("Could not parse updated device data")
         return dev
 
-    def enable_lost_dog_mode(self, pet_id: str) -> int:
-        """Enable or extend Quick Report Mode (Lost Dog Mode) for maximum GPS updates.
+    def set_lost_dog_mode(self, pet_id: str, enabled: bool) -> Device:
+        """Turn collar Lost Dog Mode on (LOST_DOG) or off (NORMAL)."""
+        mode = "LOST_DOG" if enabled else "NORMAL"
+        variables = {
+            "input": {
+                "petId": pet_id,
+                "mode": mode,
+            }
+        }
+        res = self.execute_graphql("SetPetOperationParamsMode", variables=variables)
+        pet_data = res.get("data", {}).get("setPetOperationParamsMode") or {}
+        dev_data = pet_data.get("device")
+        if not dev_data:
+            raise FiError(f"Failed to set lost mode for pet {pet_id}")
+        dev = Device.from_dict(dev_data)
+        if not dev:
+            raise FiError("Could not parse updated device data")
+        return dev
 
-        Returns:
-            ttlSeconds: The number of seconds Lost Dog Mode remains active before expiring.
-        """
+    def enable_lost_dog_mode(self, pet_id: str) -> Device:
+        """Turn collar Lost Dog Mode on (LOST_DOG)."""
+        return self.set_lost_dog_mode(pet_id, True)
+
+    def disable_lost_dog_mode(self, pet_id: str) -> Device:
+        """Turn collar Lost Dog Mode off (set to NORMAL)."""
+        return self.set_lost_dog_mode(pet_id, False)
+
+    def extend_quick_report_mode(self, pet_id: str) -> int:
+        """Extend Quick Report Mode TTL for maximum GPS update frequency."""
         res = self.execute_graphql("EnableOrExtendQuickReportMode", variables={"petId": pet_id})
         result = res.get("data", {}).get("enableOrExtendQuickReportModeForPet") or {}
         ttl = result.get("ttlSeconds", 120)

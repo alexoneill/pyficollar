@@ -23,6 +23,7 @@ from tests.fixtures import (
     LastWalkWithMap,
     LOGIN_RESPONSE,
     PetLiveState,
+    SetPetOperationParamsMode,
     UpdateDeviceOperationParams,
     UserPetProfile,
 )
@@ -77,6 +78,7 @@ class MockTransport(FiTransport):
             "GetDevice": GetDevice,
             "UpdateDeviceOperationParams": UpdateDeviceOperationParams,
             "EnableOrExtendQuickReportMode": EnableOrExtendQuickReportMode,
+            "SetPetOperationParamsMode": SetPetOperationParamsMode,
         }
 
         if operation_name in mapping:
@@ -155,8 +157,43 @@ class TestFiClient(unittest.TestCase):
         self.assertEqual(self.transport.last_variables, {"input": {"moduleId": "FC35H674757", "ledEnabled": True}})
         self.assertTrue(dev.led_enabled)
 
-    def test_enable_lost_dog_mode(self) -> None:
-        ttl = self.client.enable_lost_dog_mode("3uM1gkV7XRhltddsxTEx3s")
+    def test_set_lost_dog_mode_on(self) -> None:
+        dev = self.client.set_lost_dog_mode("3uM1gkV7XRhltddsxTEx3s", enabled=True)
+        self.assertEqual(self.transport.last_requested_op, "SetPetOperationParamsMode")
+        self.assertEqual(
+            self.transport.last_variables,
+            {"input": {"petId": "3uM1gkV7XRhltddsxTEx3s", "mode": "LOST_DOG"}},
+        )
+        self.assertEqual(dev.module_id, "FC35H674757")
+
+    def test_set_lost_dog_mode_off(self) -> None:
+        dev = self.client.set_lost_dog_mode("3uM1gkV7XRhltddsxTEx3s", enabled=False)
+        self.assertEqual(self.transport.last_requested_op, "SetPetOperationParamsMode")
+        self.assertEqual(
+            self.transport.last_variables,
+            {"input": {"petId": "3uM1gkV7XRhltddsxTEx3s", "mode": "NORMAL"}},
+        )
+        self.assertEqual(dev.module_id, "FC35H674757")
+
+    def test_enable_and_disable_lost_dog_mode(self) -> None:
+        dev_on = self.client.enable_lost_dog_mode("3uM1gkV7XRhltddsxTEx3s")
+        self.assertEqual(self.transport.last_requested_op, "SetPetOperationParamsMode")
+        self.assertEqual(
+            self.transport.last_variables,
+            {"input": {"petId": "3uM1gkV7XRhltddsxTEx3s", "mode": "LOST_DOG"}},
+        )
+        self.assertEqual(dev_on.module_id, "FC35H674757")
+
+        dev_off = self.client.disable_lost_dog_mode("3uM1gkV7XRhltddsxTEx3s")
+        self.assertEqual(self.transport.last_requested_op, "SetPetOperationParamsMode")
+        self.assertEqual(
+            self.transport.last_variables,
+            {"input": {"petId": "3uM1gkV7XRhltddsxTEx3s", "mode": "NORMAL"}},
+        )
+        self.assertEqual(dev_off.module_id, "FC35H674757")
+
+    def test_extend_quick_report_mode(self) -> None:
+        ttl = self.client.extend_quick_report_mode("3uM1gkV7XRhltddsxTEx3s")
         self.assertEqual(self.transport.last_requested_op, "EnableOrExtendQuickReportMode")
         self.assertEqual(self.transport.last_variables, {"petId": "3uM1gkV7XRhltddsxTEx3s"})
         self.assertEqual(ttl, 120)

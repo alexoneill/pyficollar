@@ -72,6 +72,13 @@ class TestModels(unittest.TestCase):
         self.assertIsNotNone(live.longitude)
         self.assertEqual(live.battery_percent, 99)
         self.assertEqual(live.lost_mode, "LDM_DISABLED")
+        self.assertFalse(live.is_lost)
+
+        # Active lost mode states
+        live.lost_mode = "LDM_REQUESTED"
+        self.assertTrue(live.is_lost)
+        live.lost_mode = "LDM_REPORT_PENDING"
+        self.assertTrue(live.is_lost)
 
     def test_activity_summary(self):
         act_data = HomescreenActivityInfo["data"]["pet"]
